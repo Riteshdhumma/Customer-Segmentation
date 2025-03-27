@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Segmentation</title>
+    <style>
+        /* Your CSS styles */
+    </style>
+</head>
+<body>
+    <h1>Customer Segmentation</h1>
+    <form id="upload-form" enctype="multipart/form-data" method="post" action="/app">
+        <label for="file-upload">Upload CSV file:</label>
+        <input type="file" id="file-upload" name="file">
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="spinner" class="spinner" style="display: none;"></div>
+    <div id="results"></div>
+
+    <!-- Your JavaScript code -->
+    <script>
+        function submitForm() {
+            var fileInput = document.getElementById('file-upload');
+            var file = fileInput.files[0];
+            var formData = new FormData();
+            formData.append('file', file);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/predict', true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    displayImages(response);
+                }
+            };
+            xhr.send(formData);
+
+            var spinner = document.getElementById('spinner');
+            spinner.style.display = 'block';
+        }
+
+        function displayImages(response) {
+            var resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            var amountImg = document.createElement('img');
+            amountImg.src = response.amount_image;
+            amountImg.style.width = '30%';
+
+            var freqImg = document.createElement('img');
+            freqImg.src = response.freq_img;
+            freqImg.style.width = '30%';
+
+            var recencyImg = document.createElement('img');
+            recencyImg.src = response.recency_img;
+            recencyImg.style.width = '30%';
+
+            resultsDiv.appendChild(amountImg);
+            resultsDiv.appendChild(freqImg);
+            resultsDiv.appendChild(recencyImg);
+
+            var spinner = document.getElementById('spinner');
+            spinner.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
